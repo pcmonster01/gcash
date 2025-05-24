@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCash Payment</title>
+</head>
+<body>
+  <h2>Pay with GCash</h2>
+  <form id="paymentForm">
+    <label for="name">Full Name:</label><br />
+    <input type="text" id="name" name="name" required /><br /><br />
+
+    <label for="amount">Amount (PHP):</label><br />
+    <input type="number" id="amount" name="amount" required min="1" /><br /><br />
+
+    <button type="submit">Pay Now</button>
+  </form>
+
+  <script>
+    document.getElementById("paymentForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const amount = document.getElementById("amount").value;
+
+      const response = await fetch("/create-gcash-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, amount }),
+      });
+
+      const data = await response.json();
+
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        alert("Error: " + data.message);
+      }
+    });
+  </script>
+</body>
+</html>
