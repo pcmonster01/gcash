@@ -2,41 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GCash Payment</title>
 </head>
 <body>
-  <h2>Pay with GCash</h2>
-  <form id="paymentForm">
-    <label for="name">Full Name:</label><br />
-    <input type="text" id="name" name="name" required /><br /><br />
-
-    <label for="amount">Amount (PHP):</label><br />
-    <input type="number" id="amount" name="amount" required min="1" /><br /><br />
-
-    <button type="submit">Pay Now</button>
+<h1>Buy Voucher</h1>
+<font size="5"> 
+<p>15 Days-P200&nbsp;&nbsp;&nbsp;&nbsp;     30 Days-P300</p></font>
+  <h1>Pay with GCash</h1>
+  <form id="gcash-form">
+    <label>Mac Address:</label>
+    <input type="text" id="name" required /><br />
+<label>Open portal in chrome 10.0.0.1 select Client info and look for Mac address</label>
+<br /><br />
+    <label>Amount (PHP):</label>
+    <input type="number" id="amount" required /><br /><br />
+    <button type="submit">Pay with GCash</button>
   </form>
 
+  <div id="response"></div>
+
   <script>
-    document.getElementById("paymentForm").addEventListener("submit", async function (e) {
+    document.getElementById("gcash-form").addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const name = document.getElementById("name").value;
       const amount = document.getElementById("amount").value;
 
-      const response = await fetch("/create-gcash-payment", {
+      const response = await fetch("/create-payment", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, amount }),
       });
 
       const data = await response.json();
 
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
       } else {
-        alert("Error: " + data.message);
+        document.getElementById("response").innerText = "Failed to create payment.";
       }
     });
   </script>
